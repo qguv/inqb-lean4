@@ -80,26 +80,61 @@ instance [DecidableEq V] : DecidableRel (α := Formula V) Subformula := Subformu
 
 namespace Formula
 
-def valuate (v : V → Prop) : Formula V → Prop
-| .bot => False
+def valuate (v : V → Bool) : Formula V → Bool
+| .bot => false
 | .var x => v x
-| .not φ => ¬φ.valuate v
-| .or φ ψ => φ.valuate v ∨ ψ.valuate v
+| .not φ => !φ.valuate v
+| .or φ ψ => φ.valuate v || ψ.valuate v
 
-def valuate.decidable (v : V → Prop) (decideVar : (x : V) → Decidable (v x)) :
-  (φ : Formula V) → Decidable (φ.valuate v)
-| .bot => by
-  rw [valuate]
-  exact inferInstance
-| .var x => decideVar x
-| .not φ => by
-  rw [valuate]
-  let _ := decidable v decideVar φ
-  exact inferInstance
-| .or φ ψ => by
-  rw [valuate]
-  let _ := decidable v decideVar φ
-  let _ := decidable v decideVar ψ
-  exact inferInstance
+def equivalent (φ : Formula V) (ψ : Formula V) : Prop :=
+  ∀ v, φ.valuate v = ψ.valuate v
+
+infix:50 " ≣ " => equivalent
+
+def tautology (φ : Formula V) : Prop :=
+  ∀ v, φ.valuate v = true
+
+prefix:50 " ⊨ " => tautology
+
+theorem tautology_iff_iff_equivalent : ∀ φ ψ : Formula V, ⊨ .iff φ ψ ↔ φ.equivalent ψ := by
+  intro φ ψ
+  constructor
+  · intro h
+    intro v
+    have h' := h v
+    simp [valuate] at h'
+    have ⟨hl, hr⟩ := h'
+    if h : φ.valuate v then
+      sorry
+    else
+      sorry
+  · intro h
+    intro v
+    simp [valuate]
+    rw [h]
+    simp
+
+
+-- def valuate (v : V → Prop) : Formula V → Prop
+-- | .bot => False
+-- | .var x => v x
+-- | .not φ => ¬φ.valuate v
+-- | .or φ ψ => φ.valuate v ∨ ψ.valuate v
+
+-- def valuate.decidable (v : V → Prop) (decideVar : (x : V) → Decidable (v x)) :
+--   (φ : Formula V) → Decidable (φ.valuate v)
+-- | .bot => by
+--   rw [valuate]
+--   exact inferInstance
+-- | .var x => decideVar x
+-- | .not φ => by
+--   rw [valuate]
+--   let _ := decidable v decideVar φ
+--   exact inferInstance
+-- | .or φ ψ => by
+--   rw [valuate]
+--   let _ := decidable v decideVar φ
+--   let _ := decidable v decideVar ψ
+--   exact inferInstance
 
 end Formula
