@@ -5,185 +5,101 @@ import Mathlib.Data.Vector.Basic
 
 open Mathlib
 
-class Connective (α : Type u) where
-  arity : α → Nat
+inductive Formula (V : Type) : Type where
+| bot : Formula V
+| var : V → Formula V
+| not : Formula V → Formula V
+| or : Formula V → Formula V → Formula V
+deriving Repr, DecidableEq
 
-inductive Expr.Ty where
-| bool : Ty
-| args : Nat → Ty
+namespace Formula
 
-inductive Expr (V : Type) (C : Type) [inst : Connective C] : Expr.Ty → Type where
-| var : V → Expr V C .bool
-| conn :
-  (c : C) →
-  Expr V C (.args (inst.arity c)) →
-  Expr V C .bool
-| nilArg : Expr V C (.args 0)
-| consArg : Expr V C (.bool) → Expr V C (.args n) → Expr V C (.args (n + 1))
-deriving Repr
+abbrev top : Formula V := .not .bot
+abbrev and (φ : Formula V) (ψ : Formula V) : Formula V :=
+  .not (.or (.not φ) (.not ψ))
+abbrev implies (φ : Formula V) (ψ : Formula V) : Formula V :=
+  .or (.not φ) ψ
+abbrev iff (φ : Formula V) (ψ : Formula V) : Formula V :=
+  .and (.implies φ ψ) (.implies ψ φ)
 
-instance instDecidableEqExpr [Connective C] [DecidableEq V] [DecidableEq C] :
-  DecidableEq (Expr V C τ)
-| φ, ψ => by
-  induction φ <;> cases ψ
-  case' var.var x y =>
-    if h : x = y then
-      apply isTrue
-      rw [h]
-    else _
-  case' conn.conn c xs ih d ys =>
-    by_cases h : c = d
-    subst h
-    have : Decidable (xs = ys) := ih ys
-    by_cases h : xs = ys
+end Formula
+
+inductive Subformula (φ : Formula V) : Formula V → Prop where
+| eq : φ = ψ → Subformula φ ψ
+| not : Subformula φ ψ → Subformula φ (.not ψ)
+| orl : Subformula φ ψl → Subformula φ (.or ψl ψr)
+| orr : Subformula φ ψr → Subformula φ (.or ψl ψr)
+
+def Subformula.decidable [DecidableEq V] : DecidableRel (α := Formula V) Subformula
+| φ, ψ =>
+  if h : φ = ψ then by
     apply isTrue
-    rw [h]
-  case' nilArg.nilArg =>
-    apply isTrue
-    rfl
-  case' consArg.consArg a as ih_a ih_as b bs =>
-    have : Decidable (a = b) := ih_a b
-    have : Decidable (as = bs) := ih_as bs
-    by_cases h1 : a = b
-    by_cases h2 : as = bs
-    apply isTrue
-    rw [h1, h2]
-  -- TODO: find a way to avoid the duplication between these two `repeat` blocks
-  -- (simply slapping a `try` onto the `injection` doesn't seem to do it)
-  repeat
-    apply isFalse
-    intro eq
-    injection eq
-    contradiction
-  repeat
-    apply isFalse
-    intro eq
-    contradiction
-
-abbrev Formula V C [Connective C] := Expr V C .bool
-abbrev Args V C n [Connective C] := Expr V C (.args n)
-
-namespace Connective
-
-inductive Standard where
-| bot
-| top
-| not
-| and
-| or
-| implies
-| iff
-deriving Repr
-
-instance : Connective Standard where
-  arity
-  | .bot => 0
-  | .top => 0
-  | .not => 1
-  | .and => 2
-  | .or => 2
-  | .implies => 2
-  | .iff => 2
-
-#check Expr.conn Standard.bot .nilArg
-#check Expr.conn Standard.and (.consArg (.var "y") (.consArg (.var "x") .nilArg))
-
-end Connective
-
-mutual
-  inductive Subformula [inst : Connective C] (φ : Formula V C) : Formula V C → Prop where
-  | rfl : Subformula φ φ
-  | conn :
-    {args : _} →
-    Subformula.OfArgs (n := inst.arity c) φ args →
-    Subformula φ (Expr.conn c args)
-
-  inductive Subformula.OfArgs [inst : Connective C] (φ : Formula V C) : Args V C n → Prop where
-  | here : Subformula φ ψ → Subformula.OfArgs φ (.consArg ψ ψs)
-  | there : Subformula.OfArgs φ ψs → Subformula.OfArgs φ (.consArg ψ ψs)
-end
-
-mutual
-  instance instDecidableRelSubformula [Connective C] [DecidableEq V] [DecidableEq C] :
-    DecidableRel (α := Formula V C) Subformula
-  | φ, ψ => by
-    if h : φ = ψ then
-      apply isTrue
-      rw [h]
-      exact .rfl
-    else
-      cases ψ with
-      | var x => sorry
-      | conn c args =>
-          if s : Subformula.OfArgs φ args then
-            apply isTrue
-            exact .conn s
-          else
-            apply isFalse
-            intro s
-            cases s <;> contradiction
-
-  instance instDecidableSubformulaOfArgs [Connective C] [DecidableEq V] [DecidableEq C] (φ : Formula V C) :
-    (args : Expr V C (.args n)) → Decidable (Subformula.OfArgs φ args)
-  | args => by
-    cases args with
-    | nilArg =>
+    apply eq
+    assumption
+  else by
+    cases ψ
+    case not ψ' =>
+      let _ := Subformula.decidable φ ψ'
+      if h : Subformula φ ψ' then
+        apply isTrue
+        apply Subformula.not
+        exact h
+      else
         apply isFalse
-        intro s
-        cases s
-    | consArg ψ ψs =>
-        if h : Subformula φ ψ then
-          apply isTrue
-          -- exact .here (ψs := ψs) h
-          sorry
-        else
-          if h' : Subformula.OfArgs φ ψs then
-            apply isTrue
-            -- exact .there h'
-            sorry
-          else
-            apply isFalse
-            intro s
-            cases s
-            repeat sorry
-end
+        intro sub
+        cases sub <;> contradiction
+    case or ψl ψr =>
+      -- WIP: efficiency issue? now i think we'll first recurse into both
+      -- disjuncts, when we may only need to check one (i.e. we're avoiding
+      -- "lazy or")
+      let _ := Subformula.decidable φ ψl
+      let _ := Subformula.decidable φ ψr
+      if h : Subformula φ ψl ∨ Subformula φ ψr then
+        apply isTrue
+        cases h with
+        | inl hl =>
+          apply Subformula.orl
+          exact hl
+        | inr hr =>
+          apply Subformula.orr
+          exact hr
+      else
+        rw [not_or] at h
+        have ⟨hl, hr⟩ := h
+        apply isFalse
+        intro sub
+        cases sub <;> contradiction
 
-#check Expr.rec
+    repeat
+      apply isFalse
+      intro sub
+      cases sub
+      contradiction
 
-mutual
-  def Formula.fold [inst : Connective C] (var : V → α) (conn : (c : C) → Vector α (inst.arity c) → α) :
-    Formula V C → α
-  | .var v => var v
-  | .conn c args => conn c (Args.fold var conn args)
+instance [DecidableEq V] : DecidableRel (α := Formula V) Subformula := Subformula.decidable
 
-  def Args.fold [inst : Connective C] (var : V → α) (conn : (c : C) → Vector α (inst.arity c) → α) :
-    Args V C n → Vector α n
-  | .nilArg => .nil
-  | .consArg φ φs => .cons (Formula.fold var conn φ) (Args.fold var conn φs)
-end
+namespace Formula
 
-namespace Connective
+def valuate (v : V → Prop) : Formula V → Prop
+| .bot => False
+| .var x => v x
+| .not φ => ¬φ.valuate v
+| .or φ ψ => φ.valuate v ∨ ψ.valuate v
 
-def Standard.valuate : (c : Standard) → Vector Prop (Connective.arity c) → Prop
-| .bot, .nil => ⊥
-| .top, .nil => ⊤
-| .not, p ::ᵥ .nil => ¬p
-| .and, p ::ᵥ q ::ᵥ .nil => p ∧ q
-| .or, p ::ᵥ q ::ᵥ .nil => p ∨ q
-| .implies, p ::ᵥ q ::ᵥ .nil => p → q
-| .iff, p ::ᵥ q ::ᵥ .nil => p ↔ q
+def valuate.decidable (v : V → Prop) (decideVar : (x : V) → Decidable (v x)) :
+  (φ : Formula V) → Decidable (φ.valuate v)
+| .bot => by
+  rw [valuate]
+  exact inferInstance
+| .var x => decideVar x
+| .not φ => by
+  rw [valuate]
+  let _ := decidable v decideVar φ
+  exact inferInstance
+| .or φ ψ => by
+  rw [valuate]
+  let _ := decidable v decideVar φ
+  let _ := decidable v decideVar ψ
+  exact inferInstance
 
-def Formula.valuate : (V → Prop) → Formula V Standard → Prop
-| v, φ => φ.fold v Standard.valuate
-
-#eval
-  fun x y =>
-  Formula.valuate
-    ( fun v => match v with
-      | "x" => x
-      | "y" => y
-      | _ => False
-    )
-    (.conn .and (.consArg (.var "y") (.consArg (.var "x") .nilArg)))
-
-end Connective
+end Formula
