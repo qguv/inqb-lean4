@@ -12,15 +12,65 @@ inductive Formula (V : Type) : Type where
 | or : Formula V → Formula V → Formula V
 deriving Repr, DecidableEq
 
+declare_syntax_cat formula
+
+syntax "⊥" : formula
+syntax ident : formula
+syntax:70 "¬" formula:70 : formula
+syntax:50 formula:51 " ∨ " formula:50 : formula
+syntax "(" formula ")" : formula
+syntax "⟪" term "⟫" : formula
+
+syntax "[f| "  formula " |]" : term
+
+macro_rules
+| `([f| ⊥ |]) => `(Formula.bot)
+| `([f| $i:ident |]) => `(Formula.var $(Lean.quote (toString i.getId)))
+| `([f| ¬$φ:formula |]) => `(Formula.not [f| $φ |])
+| `([f| $φ:formula ∨ $ψ:formula |]) => `(Formula.or [f| $φ |] [f| $ψ |])
+| `([f| ($φ:formula) |]) => `([f| $φ |])
+| `([f| ⟪$t:term⟫ |]) => pure t
+
+#check [f| ¬p ∨ q ∨ ⊥ |]
+#check [f| ⟪Formula.or .bot .bot⟫ |]
+
 namespace Formula
 
-abbrev top : Formula V := .not .bot
+abbrev top : Formula V := [f| ¬⊥ |]
+
+syntax "⊤" : formula
+
+macro_rules
+| `([f| ⊤ |]) => `(Formula.top)
+
+
 abbrev and (φ : Formula V) (ψ : Formula V) : Formula V :=
-  .not (.or (.not φ) (.not ψ))
+  [f| ¬(¬⟪φ⟫ ∨ ¬⟪ψ⟫) |]
+
+syntax:60 formula:61 " ∧ " formula:60 : formula
+
+macro_rules
+| `([f| $φ:formula ∧ $ψ:formula |]) => `(Formula.and [f| $φ |] [f| $ψ |])
+
+
 abbrev implies (φ : Formula V) (ψ : Formula V) : Formula V :=
-  .or (.not φ) ψ
+  [f| ¬⟪φ⟫ ∨ ⟪ψ⟫ |]
+
+syntax:40 formula:41 " → " formula:40 : formula
+
+macro_rules
+| `([f| $φ:formula → $ψ:formula|]) => `(Formula.implies [f| $φ |] [f| $ψ |])
+
+
 abbrev iff (φ : Formula V) (ψ : Formula V) : Formula V :=
-  .and (.implies φ ψ) (.implies ψ φ)
+  [f| ⟪φ⟫ → ⟪ψ⟫ ∧ ⟪ψ⟫ → ⟪φ⟫ |]
+
+syntax:30 formula:30 " ↔ " formula:30 : formula
+
+macro_rules
+| `([f| $φ:formula ↔ $ψ:formula|]) => `(Formula.iff [f| $φ |] [f| $ψ |])
+
+#check [f| p ∨ q ∧ r |]
 
 end Formula
 
