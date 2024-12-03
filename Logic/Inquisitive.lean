@@ -52,3 +52,30 @@ def Proposition.join (x : Proposition W) (y : Proposition W) : Proposition W whe
       apply Set.subset_union_of_subset_right
       apply y.downwardClosure
       exact hr
+
+def Proposition.meet (x : Proposition W) (y : Proposition W) : Proposition W where
+  truthSet := x.truthSet ∩ y.truthSet
+  downwardClosure := by
+    sorry
+
+def Proposition.relativePseudoComplement (x : Proposition W) : Proposition W where
+  truthSet := sorry
+  downwardClosure := by
+    sorry
+
+def Proposition.absolutePseudoComplement (x : Proposition W) : Proposition W where
+  truthSet := {s | ∀t ∈ x.truthSet, Disjoint s t}
+  downwardClosure := by
+    sorry
+    -- intro s
+    -- intro h
+    -- intro t
+    -- intro h2
+    -- intro u
+    -- intro h3
+    -- have h4 := h u h3
+    -- rw [Set.powerset, Set.mem_setOf] at h2
+    -- -- rw [Set.disjoint_iff_inter_eq_empty] at h4
+    -- have h4' : Disjoint s u := sorry
+    -- have := Set.disjoint_of_subset_left h2 h4'
+    -- apply Set.disjoint_iff_inter_eq_empty
