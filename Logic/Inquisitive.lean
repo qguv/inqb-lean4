@@ -18,11 +18,11 @@ open ExW
 def foo : Proposition ExW where
   truthSet := 𝒫 {p, pq}
   downwardClosure := by
-    intro s
+    intro _s
     intro h1
-    intro x
+    intro _t
     intro h2
-    intro y
+    intro _u
     intro h3
     rw [Set.powerset] at h1
     rw [Set.powerset] at h2
@@ -40,7 +40,7 @@ def foo : Proposition ExW where
 def Proposition.join (x : Proposition W) (y : Proposition W) : Proposition W where
   truthSet := x.truthSet ∪ y.truthSet
   downwardClosure := by
-    intro s
+    intro _s
     intro h
     rw [Set.mem_union] at h
     cases h with
@@ -56,7 +56,16 @@ def Proposition.join (x : Proposition W) (y : Proposition W) : Proposition W whe
 def Proposition.meet (x : Proposition W) (y : Proposition W) : Proposition W where
   truthSet := x.truthSet ∩ y.truthSet
   downwardClosure := by
-    sorry
+    intro _s
+    intro h
+    rw [Set.mem_inter_iff] at h
+    apply Set.subset_inter
+    case rs =>
+      apply x.downwardClosure
+      exact h.left
+    case rt =>
+      apply y.downwardClosure
+      exact h.right
 
 def Proposition.relativePseudoComplement (x : Proposition W) : Proposition W where
   truthSet := sorry
