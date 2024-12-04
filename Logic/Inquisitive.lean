@@ -73,7 +73,7 @@ def Proposition.relativePseudoComplement (x : Proposition W) : Proposition W whe
     sorry
 
 def Proposition.absolutePseudoComplement (x : Proposition W) : Proposition W where
-  truthSet := {s | ∀t ∈ x.truthSet, Disjoint s t}
+  truthSet := {s | ∀t ∈ x.truthSet, s ∩ t = ∅}
   downwardClosure := by
     sorry
     -- intro s
