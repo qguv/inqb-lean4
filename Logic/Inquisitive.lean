@@ -5,6 +5,7 @@ namespace Inquisitive
 structure Proposition (W : Type) : Type where
   truthSet : Set (Set W)
   downwardClosure : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
+  nonEmpty : truthSet ≠ ∅
 
 -- TODO: stop this from polluting namespace
 inductive ExW where
@@ -17,6 +18,10 @@ open ExW
 
 def foo : Proposition ExW where
   truthSet := 𝒫 {p, pq}
+  nonEmpty := by
+    have h := Set.powerset_nonempty (s := {p, pq})
+    rw [Set.nonempty_iff_ne_empty] at h
+    exact h
   downwardClosure := by
     intro _s
     intro h1
