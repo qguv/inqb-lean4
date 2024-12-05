@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Mathlib.Order.SetNotation
 
 namespace Inquisitive
 
@@ -103,13 +104,17 @@ def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W)
 -/
 
 def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W where
-  truthSet := {s | ∀t ∈ p.truthSet, s ∩ t = ∅}
+  truthSet := 𝒫 (⋃₀ p.truthSet)ᶜ
   containsEmpty := by
+    rw [Set.mem_powerset_iff]
+    exact Set.empty_subset (⋃₀ p.truthSet)ᶜ
+    /-
     intro s
     have h := Set.inter_empty s
     rw [Set.inter_comm] at h
     intro
     exact h
+    -/
   downwardClosure := by
     sorry
     /-
