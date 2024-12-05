@@ -21,11 +21,11 @@ def foo : Proposition ExW where
   containsEmpty := by
     simp
   downwardClosure := by
-    intro _s
+    intro
     intro h1
-    intro _t
+    intro
     intro h2
-    intro _u
+    intro
     intro h3
     rw [Set.powerset] at h1
     rw [Set.powerset] at h2
@@ -53,7 +53,7 @@ def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W whe
     exact h2
   -/
   downwardClosure := by
-    intro _s
+    intro
     intro h
     rw [Set.mem_union] at h
     cases h with
@@ -84,7 +84,7 @@ def Proposition.meet (p : Proposition W) (q : Proposition W) : Proposition W whe
     sorry
     -/
   downwardClosure := by
-    intro _s
+    intro
     intro h
     rw [Set.mem_inter_iff] at h
     apply Set.subset_inter
@@ -105,12 +105,11 @@ def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W)
 def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W where
   truthSet := {s | ∀t ∈ p.truthSet, s ∩ t = ∅}
   containsEmpty := by
-    have h1 := p.containsEmpty
     intro s
-    intro h2
-    have h3 := Set.inter_empty s
-    rw [Set.inter_comm] at h3
-    exact h3
+    have h := Set.inter_empty s
+    rw [Set.inter_comm] at h
+    intro
+    exact h
   downwardClosure := by
     sorry
     /-
