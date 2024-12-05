@@ -112,6 +112,44 @@ def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W whe
     exact h
   downwardClosure := by
     sorry
+    /-
+    intro s
+    have h1 := p.downwardClosure s
+    have h2 := p.containsEmpty
+    intro h3
+    intro t
+    intro u
+    intro v
+    intro w
+    have h4 := h3 ∅
+    -/
+
+    /-
+    intro s
+    intro h1
+    intro t
+    rw [Set.mem_def] at h1
+    have h2 := h1 t
+    rw [Set.powerset]
+    intro h3
+    intro u
+    intro h4
+    have h5 := h1 u
+    -/
+
+    /-
+    intro s
+    intro h1
+    --rw [←Set.mem_powerset_iff]
+    --rw [Set.mem_def] at h1
+    --rw [Set.mem_powerset_iff]
+    --have h2 := h1 ∅
+    rw [Set.powerset]
+    rw [Set.subset_def]
+    intro t
+    intro h2
+    --have intersection := s ∩ t
+    -/
 
     /-
     intro s
