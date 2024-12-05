@@ -20,7 +20,8 @@ open ExW
 def foo : Proposition ExW where
   truthSet := 𝒫 {p, pq}
   containsEmpty := by
-    simp
+    rw [Set.mem_powerset_iff]
+    exact Set.empty_subset {p, pq}
   downwardClosure := by
     intro
     intro h1
