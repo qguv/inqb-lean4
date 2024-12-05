@@ -5,7 +5,7 @@ namespace Inquisitive
 structure Proposition (W : Type) : Type where
   truthSet : Set (Set W)
   downwardClosure : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
-  nonEmpty : truthSet ≠ ∅
+  nonEmpty : Set.Nonempty truthSet
 
 -- TODO: stop this from polluting namespace
 inductive ExW where
@@ -19,9 +19,7 @@ open ExW
 def foo : Proposition ExW where
   truthSet := 𝒫 {p, pq}
   nonEmpty := by
-    have h := Set.powerset_nonempty (s := {p, pq})
-    rw [Set.nonempty_iff_ne_empty] at h
-    exact h
+    exact Set.powerset_nonempty (s := {p, pq})
   downwardClosure := by
     intro _s
     intro h1
@@ -44,6 +42,11 @@ def foo : Proposition ExW where
 
 def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := p.truthSet ∪ q.truthSet
+  nonEmpty := by
+    have h := Set.union_nonempty (s := p.truthSet) (t := q.truthSet)
+    have h2 := Or.inl p.nonEmpty (b := Set.Nonempty q.truthSet)
+    rw [←h] at h2
+    exact h2
   downwardClosure := by
     intro _s
     intro h
@@ -60,6 +63,9 @@ def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W whe
 
 def Proposition.meet (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := p.truthSet ∩ q.truthSet
+  nonEmpty := by
+    --apply Set.inter_nonempty
+    sorry
   downwardClosure := by
     intro _s
     intro h
@@ -81,6 +87,8 @@ def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W)
 
 def Proposition.absolutePseudoComplement (x : Proposition W) : Proposition W where
   truthSet := {s | ∀t ∈ x.truthSet, s ∩ t = ∅}
+  nonEmpty := by
+    sorry
   downwardClosure := by
     intro s
     intro h1
