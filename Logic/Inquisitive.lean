@@ -118,6 +118,15 @@ def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W whe
     -/
   downwardClosure := by
     sorry
+
+    /-
+    have dc := p.downwardClosure
+    have ce := p.containsEmpty
+    intro s
+    intro h1
+    rw [Set.mem_powerset_iff] at h1
+    -/
+
     /-
     intro s
     have h1 := p.downwardClosure s
