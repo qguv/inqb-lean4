@@ -5,7 +5,7 @@ namespace Inquisitive
 structure Proposition (W : Type) : Type where
   truthSet : Set (Set W)
   downwardClosure : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
-  nonEmpty : Set.Nonempty truthSet
+  containsEmpty : ∅ ∈ truthSet
 
 -- TODO: stop this from polluting namespace
 inductive ExW where
@@ -18,8 +18,8 @@ open ExW
 
 def foo : Proposition ExW where
   truthSet := 𝒫 {p, pq}
-  nonEmpty := by
-    exact Set.powerset_nonempty (s := {p, pq})
+  containsEmpty := by
+    simp
   downwardClosure := by
     intro _s
     intro h1
@@ -37,16 +37,21 @@ def foo : Proposition ExW where
 
 #check Set.Subset
 
-#print foo.proof_1
+#print foo.proof_2
 
 
 def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := p.truthSet ∪ q.truthSet
+  containsEmpty := by
+    apply Set.mem_union_left
+    exact p.containsEmpty
+  /-
   nonEmpty := by
     have h := Set.union_nonempty (s := p.truthSet) (t := q.truthSet)
     have h2 := Or.inl p.nonEmpty (b := Set.Nonempty q.truthSet)
     rw [←h] at h2
     exact h2
+  -/
   downwardClosure := by
     intro _s
     intro h
@@ -63,9 +68,21 @@ def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W whe
 
 def Proposition.meet (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := p.truthSet ∩ q.truthSet
+  containsEmpty := And.intro p.containsEmpty q.containsEmpty
+  /-
   nonEmpty := by
-    --apply Set.inter_nonempty
+    have px := Set.nonempty_def (s := p.truthSet)
+    have hp_nonEmpty := p.nonEmpty
+    rw [px] at hp_nonEmpty
+
+    have qx := Set.nonempty_def (s := q.truthSet)
+    have hq_nonEmpty := q.nonEmpty
+    rw [qx] at hq_nonEmpty
+
+    have pq_nonEmpty := And.intro hp_nonEmpty hq_nonEmpty
+    rw [Set.inter_nonempty]
     sorry
+    -/
   downwardClosure := by
     intro _s
     intro h
@@ -85,16 +102,23 @@ def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W)
     sorry
 -/
 
-def Proposition.absolutePseudoComplement (x : Proposition W) : Proposition W where
-  truthSet := {s | ∀t ∈ x.truthSet, s ∩ t = ∅}
-  nonEmpty := by
-    sorry
+def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W where
+  truthSet := {s | ∀t ∈ p.truthSet, s ∩ t = ∅}
+  containsEmpty := by
+    have h1 := p.containsEmpty
+    intro s
+    intro h2
+    have h3 := Set.inter_empty s
+    rw [Set.inter_comm] at h3
+    exact h3
   downwardClosure := by
+    sorry
+    /-
     intro s
     intro h1
     have dc := x.downwardClosure
     rw [Set.mem_def] at h1
-    sorry
+    -/
 
     /-
     fun y ↦
