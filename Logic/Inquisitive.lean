@@ -112,6 +112,19 @@ def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W whe
     exact h
   downwardClosure := by
     sorry
+
+    /-
+    intro s
+    intro h1
+    have h2 := p.containsEmpty
+    intro t
+    intro h4
+    rw [Set.mem_powerset_iff] at h4 -- duplicate of trait subset_of_mem_powerset?
+    have h5 := Set.mem_of_mem_of_subset h1 h4
+    --apply Set.mem_powerset
+    --rw [Set.mem_powerset_iff] at h1
+    -/
+
     /-
     intro s
     intro h1
