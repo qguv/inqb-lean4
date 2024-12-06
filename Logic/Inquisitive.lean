@@ -8,7 +8,7 @@ structure Proposition (W : Type) : Type where
   downwardClosure : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
   containsEmpty : ∅ ∈ truthSet
 
-theorem powerset_downward_closed {α : Type w} (xs : Set α) : (∀ s ∈ 𝒫 xs, 𝒫 s ⊆ 𝒫 xs) := by
+theorem powerset_downward_closed {α : Type} (xs : Set α) : (∀ s ∈ 𝒫 xs, 𝒫 s ⊆ 𝒫 xs) := by
   intro
   intro h1
   intro
