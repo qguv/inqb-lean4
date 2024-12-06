@@ -90,8 +90,13 @@ theorem subset_trans {α : Type} {A : Set α} {B : Set α} {C : Set α} : A ⊆ 
 def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := {s | ∀ t ⊆ s, t ∈ p.truthSet → t ∈ q.truthSet}
   containsEmpty := by
-    have h := q.containsEmpty
-    simp [*]
+    intro
+    intro b
+    intro
+    rw [Set.subset_empty_iff] at b
+    rw [b]
+    exact q.containsEmpty
+
   downwardClosed := by
     intro s
     intro h1
