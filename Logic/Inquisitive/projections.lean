@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Order.SetNotation
 import Logic.Inquisitive.types
 import Logic.Inquisitive.lemmas
+import Logic.Inquisitive.ops
 
 namespace Inquisitive
 
@@ -24,9 +25,7 @@ def Proposition.decisionSet (p : Proposition W) : Proposition W where
     cases h with
     | inl hl =>
       have h2 := p.downwardClosed s hl
-      --have h3 := Set.subset_union_left (s := p.truthSet) (t := p.truthSetᶜ)
-      have h3 := Set.subset_union_of_subset_left p.truthSetᶜ
-      sorry
+      exact Set.subset_union_of_subset_left h2 p.truthSetᶜ
     | inr hr =>
       sorry
   /-
