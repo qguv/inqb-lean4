@@ -8,6 +8,18 @@ structure Proposition (W : Type) : Type where
   downwardClosed : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
   containsEmpty : ∅ ∈ truthSet
 
+theorem subset_trans {α : Type} {A : Set α} {B : Set α} {C : Set α} : A ⊆ B → B ⊆ C → A ⊆ C := by
+  intro a_sub_b
+  intro b_sub_c
+  rw [Set.subset_def] at a_sub_b
+  rw [Set.subset_def] at b_sub_c
+  rw [Set.subset_def]
+  intro x
+  intro x_in_a
+  have x_in_b := a_sub_b x x_in_a
+  have x_in_c := b_sub_c x x_in_b
+  exact x_in_c
+
 theorem powerset_downward_closed {α : Type} (xs : Set α) : (∀ s ∈ 𝒫 xs, 𝒫 s ⊆ 𝒫 xs) := by
   intro
   intro h1
@@ -19,7 +31,7 @@ theorem powerset_downward_closed {α : Type} (xs : Set α) : (∀ s ∈ 𝒫 xs,
   rw [Set.powerset] at h2
   rw [Set.mem_setOf_eq] at h1
   rw [Set.mem_setOf_eq] at h2
-  have h4 := Set.Subset.trans h2 h1
+  have h4 := subset_trans h2 h1
   apply h4
   exact h3
 
@@ -74,18 +86,6 @@ def Proposition.meet (p : Proposition W) (q : Proposition W) : Proposition W whe
     case rt =>
       apply q.downwardClosed
       exact h.right
-
-theorem subset_trans {α : Type} {A : Set α} {B : Set α} {C : Set α} : A ⊆ B → B ⊆ C → A ⊆ C := by
-  intro a_sub_b
-  intro b_sub_c
-  rw [Set.subset_def] at a_sub_b
-  rw [Set.subset_def] at b_sub_c
-  rw [Set.subset_def]
-  intro x
-  intro x_in_a
-  have x_in_b := a_sub_b x x_in_a
-  have x_in_c := b_sub_c x x_in_b
-  exact x_in_c
 
 def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := {s | ∀ t ⊆ s, t ∈ p.truthSet → t ∈ q.truthSet}
