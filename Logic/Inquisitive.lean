@@ -98,19 +98,17 @@ def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W)
     exact q.containsEmpty
 
   downwardClosed := by
-    intro s
+    intro
     intro h1
     rw [Set.mem_setOf] at h1
-    intro t
+    intro
     intro h2
     rw [Set.mem_setOf]
     intro h3
-    have h4 := h1 h3
-    intro h5
+    intro h4
     rw [Set.mem_powerset_iff] at h2
-    have h6 := subset_trans h5 h2
-    have h7 := h4 h6
-    exact h7
+    have h5 := subset_trans h4 h2
+    exact h1 h3 h5
 
 def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W where
   truthSet := 𝒫 (⋃₀ p.truthSet)ᶜ
