@@ -8,6 +8,21 @@ structure Proposition (W : Type) : Type where
   downwardClosure : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
   containsEmpty : ∅ ∈ truthSet
 
+theorem powerset_downward_closed {α : Type w} (xs : Set α) : (∀ s ∈ 𝒫 xs, 𝒫 s ⊆ 𝒫 xs) := by
+  intro
+  intro h1
+  intro
+  intro h2
+  intro
+  intro h3
+  rw [Set.powerset] at h1
+  rw [Set.powerset] at h2
+  rw [Set.mem_setOf_eq] at h1
+  rw [Set.mem_setOf_eq] at h2
+  have h4 := Set.Subset.trans h2 h1
+  apply h4
+  exact h3
+
 -- TODO: stop this from polluting namespace
 inductive ExW where
 | p
@@ -22,25 +37,11 @@ def foo : Proposition ExW where
   containsEmpty := by
     rw [Set.mem_powerset_iff]
     exact Set.empty_subset {p, pq}
-  downwardClosure := by
-    intro
-    intro h1
-    intro
-    intro h2
-    intro
-    intro h3
-    rw [Set.powerset] at h1
-    rw [Set.powerset] at h2
-    rw [Set.mem_setOf_eq] at h1
-    rw [Set.mem_setOf_eq] at h2
-    have h4 := Set.Subset.trans h2 h1
-    apply h4
-    exact h3
+  downwardClosure := powerset_downward_closed {p, pq}
 
 #check Set.Subset
 
 #print foo.proof_2
-
 
 def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := p.truthSet ∪ q.truthSet
@@ -116,8 +117,7 @@ def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W whe
     intro
     exact h
     -/
-  downwardClosure := by
-    sorry
+  downwardClosure := powerset_downward_closed (⋃₀ p.truthSet)ᶜ
 
     /-
     have dc := p.downwardClosure
