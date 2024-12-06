@@ -12,11 +12,11 @@ def Proposition.info (p : Proposition W) : Proposition W where
   downwardClosed := lemmas.powerset_downward_closed (⋃₀ p.truthSet)
 
 def Proposition.decisionSet (p : Proposition W) : Proposition W where
-  truthSet := p.truthSet ∪ (p.truthSet)ᶜ
+  truthSet := p.truthSet ∪ p.absolutePseudoComplement.truthSet
   containsEmpty := by
     rw [Set.union_def]
     rw [Set.mem_setOf]
-    exact Or.intro_left (∅ ∈ p.truthSetᶜ) p.containsEmpty
+    exact Or.intro_left (∅ ∈ p.absolutePseudoComplement.truthSet) p.containsEmpty
   downwardClosed := by
     intro s
     intro h
@@ -25,24 +25,7 @@ def Proposition.decisionSet (p : Proposition W) : Proposition W where
     cases h with
     | inl hl =>
       have h2 := p.downwardClosed s hl
-      exact Set.subset_union_of_subset_left h2 p.truthSetᶜ
+      exact Set.subset_union_of_subset_left h2 p.absolutePseudoComplement.truthSet
     | inr hr =>
-      have h2 := p.downwardClosed s hr
+      have h2 := p.absolutePseudoComplement.downwardClosed s hr
       exact Set.subset_union_of_subset_right h2 p.truthSet
-  /-
-    intro s
-    intro h
-    intro t
-    rw [Set.union_def] at h
-    rw [Set.mem_setOf] at h
-    rw [Set.union_def]
-    intro h2
-    rw [Set.mem_powerset_iff] at h2
-    rw [Set.mem_setOf]
-    have h := p.downwardClosed
-    cases h with
-    | inl hl =>
-      sorry
-    | inr hr =>
-      sorry
--/
