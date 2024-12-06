@@ -27,7 +27,8 @@ def Proposition.decisionSet (p : Proposition W) : Proposition W where
       have h2 := p.downwardClosed s hl
       exact Set.subset_union_of_subset_left h2 p.truthSetᶜ
     | inr hr =>
-      sorry
+      have h2 := p.downwardClosed s hr
+      exact Set.subset_union_of_subset_right h2 p.truthSet
   /-
     intro s
     intro h
