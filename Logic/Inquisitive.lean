@@ -88,10 +88,24 @@ theorem subset_trans {α : Type} {A : Set α} {B : Set α} {C : Set α} : A ⊆ 
   exact x_in_c
 
 def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W) : Proposition W where
-  truthSet := {s | ∀ t ⊆ s, t ∈ p → t ∈ q}
+  truthSet := {s | ∀ t ⊆ s, t ∈ p.truthSet → t ∈ q.truthSet}
+  containsEmpty := by
+    have h := q.containsEmpty
+    simp [*]
   downwardClosure := by
-    sorry
--/
+    intro s
+    intro h1
+    rw [Set.mem_setOf] at h1
+    intro t
+    intro h2
+    rw [Set.mem_setOf]
+    intro h3
+    have h4 := h1 h3
+    intro h5
+    rw [Set.mem_powerset_iff] at h2
+    have h6 := subset_trans h5 h2
+    have h7 := h4 h6
+    exact h7
 
 def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W where
   truthSet := 𝒫 (⋃₀ p.truthSet)ᶜ
