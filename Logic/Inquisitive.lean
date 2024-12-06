@@ -5,7 +5,7 @@ namespace Inquisitive
 
 structure Proposition (W : Type) : Type where
   truthSet : Set (Set W)
-  downwardClosure : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
+  downwardClosed : ∀s ∈ truthSet, 𝒫 s ⊆ truthSet
   containsEmpty : ∅ ∈ truthSet
 
 theorem powerset_downward_closed {α : Type} (xs : Set α) : (∀ s ∈ 𝒫 xs, 𝒫 s ⊆ 𝒫 xs) := by
@@ -37,7 +37,7 @@ def foo : Proposition ExW where
   containsEmpty := by
     rw [Set.mem_powerset_iff]
     exact Set.empty_subset {p, pq}
-  downwardClosure := powerset_downward_closed {p, pq}
+  downwardClosed := powerset_downward_closed {p, pq}
 
 #print foo.proof_2
 
@@ -46,33 +46,33 @@ def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W whe
   containsEmpty := by
     apply Set.mem_union_left
     exact p.containsEmpty
-  downwardClosure := by
+  downwardClosed := by
     intro
     intro h
     rw [Set.mem_union] at h
     cases h with
     | inl hl =>
       apply Set.subset_union_of_subset_left
-      apply p.downwardClosure
+      apply p.downwardClosed
       exact hl
     | inr hr =>
       apply Set.subset_union_of_subset_right
-      apply q.downwardClosure
+      apply q.downwardClosed
       exact hr
 
 def Proposition.meet (p : Proposition W) (q : Proposition W) : Proposition W where
   truthSet := p.truthSet ∩ q.truthSet
   containsEmpty := And.intro p.containsEmpty q.containsEmpty
-  downwardClosure := by
+  downwardClosed := by
     intro
     intro h
     rw [Set.mem_inter_iff] at h
     apply Set.subset_inter
     case rs =>
-      apply p.downwardClosure
+      apply p.downwardClosed
       exact h.left
     case rt =>
-      apply q.downwardClosure
+      apply q.downwardClosed
       exact h.right
 
 theorem subset_trans {α : Type} {A : Set α} {B : Set α} {C : Set α} : A ⊆ B → B ⊆ C → A ⊆ C := by
@@ -92,7 +92,7 @@ def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W)
   containsEmpty := by
     have h := q.containsEmpty
     simp [*]
-  downwardClosure := by
+  downwardClosed := by
     intro s
     intro h1
     rw [Set.mem_setOf] at h1
@@ -112,4 +112,4 @@ def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W whe
   containsEmpty := by
     rw [Set.mem_powerset_iff]
     exact Set.empty_subset (⋃₀ p.truthSet)ᶜ
-  downwardClosure := powerset_downward_closed (⋃₀ p.truthSet)ᶜ
+  downwardClosed := powerset_downward_closed (⋃₀ p.truthSet)ᶜ
