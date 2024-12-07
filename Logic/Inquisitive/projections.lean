@@ -1,15 +1,15 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.SetNotation
 import Logic.Inquisitive.types
-import Logic.Inquisitive.lemmas
+import Logic.SetLemmas
 import Logic.Inquisitive.ops
 
 namespace Inquisitive
 
 def Proposition.info (p : Proposition W) : Proposition W where
   truthSet := 𝒫 ⋃₀ p.truthSet
-  containsEmpty := lemmas.emptyset_in_powerset (⋃₀ p.truthSet)
-  downwardClosed := lemmas.powerset_downward_closed (⋃₀ p.truthSet)
+  containsEmpty := SetLemmas.emptyset_in_powerset (⋃₀ p.truthSet)
+  downwardClosed := SetLemmas.powerset_downward_closed (⋃₀ p.truthSet)
 
 def Proposition.decisionSet (p : Proposition W) : Proposition W where
   truthSet := p.truthSet ∪ p.absolutePseudoComplement.truthSet

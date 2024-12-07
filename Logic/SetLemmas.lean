@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 
-namespace Inquisitive.lemmas
+namespace SetLemmas
 
 theorem subset_trans {α : Type} {A : Set α} {B : Set α} {C : Set α} : A ⊆ B → B ⊆ C → A ⊆ C := by
   intro a_sub_b

@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.SetNotation
 import Logic.Inquisitive.types
-import Logic.Inquisitive.lemmas
+import Logic.SetLemmas
 
 namespace Inquisitive
 
@@ -67,4 +67,4 @@ def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W whe
   containsEmpty := by
     rw [Set.mem_powerset_iff]
     exact Set.empty_subset (⋃₀ p.truthSet)ᶜ
-  downwardClosed := lemmas.powerset_downward_closed (⋃₀ p.truthSet)ᶜ
+  downwardClosed := SetLemmas.powerset_downward_closed (⋃₀ p.truthSet)ᶜ

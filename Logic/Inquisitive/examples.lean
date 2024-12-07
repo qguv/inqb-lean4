@@ -1,5 +1,5 @@
 import Logic.Inquisitive.types
-import Logic.Inquisitive.lemmas
+import Logic.SetLemmas
 
 namespace Inquisitive
 
@@ -17,6 +17,6 @@ def foo : Proposition ExW where
   containsEmpty := by
     rw [Set.mem_powerset_iff]
     exact Set.empty_subset {p, pq}
-  downwardClosed := lemmas.powerset_downward_closed {p, pq}
+  downwardClosed := SetLemmas.powerset_downward_closed {p, pq}
 
 #print foo.proof_2
