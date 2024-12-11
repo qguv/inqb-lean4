@@ -9,59 +9,46 @@ namespace Inquisitive
 
 variable {W : Type}
 
-#print lemmas.info_is_double_absolutePseudoComplement
-
 -- a.k.a. book exercise 3.6, homework 1 exercise 3
 theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
-  --let not_info := p.info.truthSetᶜ
-  --let px := p
-  have h1 := lemmas.info_is_double_absolutePseudoComplement p
-  apply lemmas.eq_of_truthSet_eq
+
+  -- from meet to intersection of truthsets
   unfold Proposition.meet
+  apply lemmas.eq_of_truthSet_eq
   simp only
-  apply lemmas.eq_of_truthSet_eq at h1
-  rw [h1]
-  unfold Proposition.absolutePseudoComplement
-  simp only
+
+  -- from decisionSet to union of self and complement
   unfold Proposition.decisionSet
   simp only
-  unfold Proposition.absolutePseudoComplement
-  simp only
-  --simp
-  -- ext turns equalities into bi-implications
+
+  rw [Set.inter_union_distrib_left]
+
   ext x
   constructor
   case a.h.mp =>
     intro s
-    simp only [Set.mem_inter_iff, Set.mem_powerset_iff, Set.mem_union]
-    constructor
-    case right => exact Or.inl s
+    apply Or.inl
+    apply And.intro
     case left =>
-      intro t
-      intro h
-      rw [Set.mem_compl_iff]
-      --rw [Set.not_mem_of_not_mem_sUnion]
-      --apply Not.intro
-      intro u
-      --rw [Set.mem_def]
-      sorry
+      unfold Proposition.info
+      simp only
+      exact Set.subset_sUnion_of_mem s
+    case right =>
+      exact s
   case a.h.mpr =>
-    intro h2
-    cases h2.right with
-    | inl h3 => exact h3
-    | inr h3 =>
-      sorry
-    -- simp only is like rw but applies any number of times and in any order
-    --simp?
-    --show_term simp
-    --consider always converting simp to simp only
-    --simp only [Set.mem_inter_iff, Set.mem_powerset_iff, Set.mem_union]
-
-
-  -- rcases p with ⟨X, hX, hX'⟩
-
-  -- have h2 := Eq.mp (a := p.info) (b := p.absolutePseudoComplement.absolutePseudoComplement) h1 p.info
-  --rw [h1] at p
-
-  -- have p := p.info.containsEmpty
-  -- sorry
+    intro s
+    cases s with
+    | inl y =>
+      exact y.right
+    | inr y =>
+      -- need: !p ∪ p* = p
+      -- maybe through !p = p**
+      cases y with
+      | intro info comp =>
+        unfold Proposition.info at info
+        simp only at info
+        rw [Set.mem_powerset_iff] at info
+        unfold Proposition.absolutePseudoComplement at comp
+        rw [Set.mem_powerset_iff] at comp
+        rw [Set.compl_def] at comp
+        sorry
