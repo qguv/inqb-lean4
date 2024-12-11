@@ -4,6 +4,7 @@ import Logic.Inquisitive.types
 import Logic.Inquisitive.ops
 import Logic.Inquisitive.projections
 import Logic.Inquisitive.lemmas
+import Logic.SetLemmas
 
 namespace Inquisitive
 
@@ -41,16 +42,12 @@ theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
     | inl h => exact h.right
     | inr h =>
       obtain ⟨info, comp⟩ := h
-      -- have: x ∈ (!p).truthSet and x ∈ (p*).truthSet
-      -- need: !p ∪ p* = p
-      -- original idea: use lemma !p = p**
-      -- new idea: use p ⊆ !p
       unfold Proposition.info at info
       simp only at info
       rw [Set.mem_powerset_iff] at info
       unfold Proposition.absolutePseudoComplement at comp
       rw [Set.mem_powerset_iff] at comp
       have h := p.containsEmpty
-      -- the only way for x to be the subset of a set and its compliment is for it to be the empty set
-      -- which we know is in p.truthSet by p.containsEmpty
-      sorry
+      have h2 := SetLemmas.empty_of_subset_of_compl x info comp
+      subst x
+      exact h
