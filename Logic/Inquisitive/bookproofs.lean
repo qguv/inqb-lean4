@@ -18,14 +18,18 @@ theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
   apply lemmas.eq_of_truthSet_eq
   simp only
 
-  -- from decisionSet to union of self and complement
+  -- ?p → p ∪ p*
   unfold Proposition.decisionSet
   simp only
 
+  -- distribute ∩ across ∪
   rw [Set.inter_union_distrib_left]
 
+  -- split equality proof into biconditional
   ext x
   constructor
+
+  -- p -> !p ∩ ?p
   case a.h.mp =>
     intro s
     apply Or.inl
@@ -36,6 +40,8 @@ theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
       exact Set.subset_sUnion_of_mem s
     case right =>
       exact s
+
+  -- !p ∩ ?p -> p
   case a.h.mpr =>
     intro s
     cases s with
