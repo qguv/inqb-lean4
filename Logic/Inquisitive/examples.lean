@@ -3,7 +3,6 @@ import Logic.SetLemmas
 
 namespace Inquisitive
 
--- TODO: stop this from polluting namespace
 inductive ExW where
 | p
 | q
@@ -18,5 +17,3 @@ def foo : Proposition ExW where
     rw [Set.mem_powerset_iff]
     exact Set.empty_subset {p, pq}
   downwardClosed := SetLemmas.powerset_downward_closed {p, pq}
-
-#print foo.proof_2
