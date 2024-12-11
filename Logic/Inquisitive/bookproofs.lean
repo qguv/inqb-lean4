@@ -38,17 +38,19 @@ theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
   case a.h.mpr =>
     intro s
     cases s with
-    | inl y =>
-      exact y.right
-    | inr y =>
+    | inl h => exact h.right
+    | inr h =>
+      obtain ⟨info, comp⟩ := h
+      -- have: x ∈ (!p).truthSet and x ∈ (p*).truthSet
       -- need: !p ∪ p* = p
-      -- maybe through !p = p**
-      cases y with
-      | intro info comp =>
-        unfold Proposition.info at info
-        simp only at info
-        rw [Set.mem_powerset_iff] at info
-        unfold Proposition.absolutePseudoComplement at comp
-        rw [Set.mem_powerset_iff] at comp
-        rw [Set.compl_def] at comp
-        sorry
+      -- original idea: use lemma !p = p**
+      -- new idea: use p ⊆ !p
+      unfold Proposition.info at info
+      simp only at info
+      rw [Set.mem_powerset_iff] at info
+      unfold Proposition.absolutePseudoComplement at comp
+      rw [Set.mem_powerset_iff] at comp
+      have h := p.containsEmpty
+      -- the only way for x to be the subset of a set and its compliment is for it to be the empty set
+      -- which we know is in p.truthSet by p.containsEmpty
+      sorry
