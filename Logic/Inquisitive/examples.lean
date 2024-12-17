@@ -1,7 +1,9 @@
 import Logic.Inquisitive.types
 import Logic.SetLemmas
 
-namespace Inquisitive
+open Inquisitive
+
+section
 
 inductive ExW where
 | p
