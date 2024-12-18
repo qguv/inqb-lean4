@@ -11,7 +11,7 @@ namespace Inquisitive
 variable {W : Type}
 
 -- a.k.a. book exercise 3.6, homework 1 exercise 3
-theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
+theorem fact_3_14 (p : Proposition W) : p = p.bang.meet p.decisionSet := by
 
   -- from meet to intersection of truthsets
   unfold Proposition.meet
@@ -35,7 +35,7 @@ theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
     apply Or.inl
     apply And.intro
     case left =>
-      unfold Proposition.info
+      unfold Proposition.bang
       simp only
       exact Set.subset_sUnion_of_mem s
     case right =>
@@ -48,7 +48,7 @@ theorem fact_3_14 (p : Proposition W) : p = p.info.meet p.decisionSet := by
     | inl h => exact h.right
     | inr h =>
       obtain ⟨info, comp⟩ := h
-      unfold Proposition.info at info
+      unfold Proposition.bang at info
       simp only at info
       rw [Set.mem_powerset_iff] at info
       unfold Proposition.absolutePseudoComplement at comp

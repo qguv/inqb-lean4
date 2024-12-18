@@ -6,7 +6,7 @@ import Logic.Inquisitive.ops
 
 namespace Inquisitive
 
-def Proposition.info (p : Proposition W) : Proposition W where
+def Proposition.bang (p : Proposition W) : Proposition W where
   truthSet := 𝒫 ⋃₀ p.truthSet
   containsEmpty := SetLemmas.emptyset_in_powerset (⋃₀ p.truthSet)
   downwardClosed := SetLemmas.powerset_downward_closed (⋃₀ p.truthSet)

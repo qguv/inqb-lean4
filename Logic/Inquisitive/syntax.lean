@@ -19,7 +19,7 @@ macro "?" p:ident : term => do
   `(Proposition.decisionSet $p)
 
 macro "!" p:ident : term => do
-  `(Proposition.info $p)
+  `(Proposition.bang $p)
 
 macro "⁉" p:ident : term => do
-  `(Proposition.info (Proposition.decisionSet $p))
+  `(Proposition.bang (Proposition.decisionSet $p))

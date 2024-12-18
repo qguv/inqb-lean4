@@ -5,7 +5,10 @@ import Logic.SetLemmas
 
 namespace Inquisitive
 
-def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W where
+variable {W: Type}
+variable (p q : Proposition W)
+
+def Proposition.join : Proposition W where
   truthSet := p.truthSet ∪ q.truthSet
   containsEmpty := by
     apply Set.mem_union_left
@@ -24,7 +27,7 @@ def Proposition.join (p : Proposition W) (q : Proposition W) : Proposition W whe
       apply q.downwardClosed
       exact hr
 
-def Proposition.meet (p : Proposition W) (q : Proposition W) : Proposition W where
+def Proposition.meet : Proposition W where
   truthSet := p.truthSet ∩ q.truthSet
   containsEmpty := And.intro p.containsEmpty q.containsEmpty
   downwardClosed := by
@@ -39,7 +42,7 @@ def Proposition.meet (p : Proposition W) (q : Proposition W) : Proposition W whe
       apply q.downwardClosed
       exact h.right
 
-def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W) : Proposition W where
+def Proposition.relativePseudoComplement : Proposition W where
   truthSet := {s | ∀ t ⊆ s, t ∈ p.truthSet → t ∈ q.truthSet}
   containsEmpty := by
     intro
@@ -62,7 +65,7 @@ def Proposition.relativePseudoComplement (p : Proposition W) (q : Proposition W)
     have h5 := SetLemmas.subset_trans h4 h2
     exact h1 h3 h5
 
-def Proposition.absolutePseudoComplement (p : Proposition W) : Proposition W where
+def Proposition.absolutePseudoComplement : Proposition W where
   truthSet := 𝒫 (⋃₀ p.truthSet)ᶜ
   containsEmpty := by
     rw [Set.mem_powerset_iff]
