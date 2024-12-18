@@ -1,5 +1,6 @@
 import Logic.Inquisitive.types
 import Logic.SetLemmas
+import Logic.Inquisitive.entailment
 
 open Inquisitive
 

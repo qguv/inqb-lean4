@@ -3,15 +3,19 @@ import Mathlib.Order.SetNotation
 import Logic.Inquisitive.types
 import Logic.SetLemmas
 import Logic.Inquisitive.ops
+import Logic.Inquisitive.entailment
 
 namespace Inquisitive
 
-def Proposition.bang (p : Proposition W) : Proposition W where
-  truthSet := 𝒫 ⋃₀ p.truthSet
-  containsEmpty := SetLemmas.emptyset_in_powerset (⋃₀ p.truthSet)
-  downwardClosed := SetLemmas.powerset_downward_closed (⋃₀ p.truthSet)
+variable {W : Type}
+variable (p: Proposition W)
 
-def Proposition.decisionSet (p : Proposition W) : Proposition W where
+def Proposition.bang : Proposition W where
+  truthSet := 𝒫 p.info
+  containsEmpty := SetLemmas.emptyset_in_powerset p.info
+  downwardClosed := SetLemmas.powerset_downward_closed p.info
+
+def Proposition.decisionSet : Proposition W where
   truthSet := p.truthSet ∪ p.absolutePseudoComplement.truthSet
   containsEmpty := by
     rw [Set.union_def]
