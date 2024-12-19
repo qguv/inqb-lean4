@@ -51,3 +51,8 @@ theorem empty_of_subset_of_compl : (∀ a ⊆ A, a ⊆ Aᶜ → a = ∅) := by
   apply h3
   exact a
   exact h2 a
+
+theorem max_of_powerset : (∀ s ∈ 𝒫 A, s ⊆ A) := by
+  intro s
+  intro h
+  exact h

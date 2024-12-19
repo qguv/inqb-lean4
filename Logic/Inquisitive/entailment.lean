@@ -14,3 +14,4 @@ def Proposition.isInformative := p.info ≠ Set.univ
 def Proposition.isInquisitive := p.info ∉ p.truthSet
 def Proposition.isTautology := Set.univ ∈ p.truthSet
 def Proposition.alt := { s ∈ p.truthSet | ¬(∃t ∈ p.truthSet, s ⊂ t) }
+def Proposition.supportedBy (s : Set W) := s ∈ p.truthSet
