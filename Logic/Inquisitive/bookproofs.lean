@@ -21,18 +21,11 @@ theorem fact_2_14 : ∀ w, p.trueIn w ↔ p.supportedBy {w} := by
     intro h
     rw [Set.mem_sUnion] at h
     obtain ⟨t, ⟨h1, h2⟩⟩ := h
-    suffices hs : (t = {w})
-    case intro.intro =>
-      rw [hs] at h1
-      exact h1
-    case hs =>
-      have dc := p.downwardClosed {w}
-      ext a
-      constructor
-      case h.mp =>
-        sorry
-      case h.mpr =>
-        sorry
+    have dc := p.downwardClosed
+    apply dc t h1
+    rw [Set.mem_powerset_iff]
+    rw [Set.singleton_subset_iff]
+    exact h2
   case mpr =>
     intro h
     rw [Set.mem_sUnion]
