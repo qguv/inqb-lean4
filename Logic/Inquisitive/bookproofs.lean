@@ -101,11 +101,15 @@ theorem fact_2_19iii (h : ∃ s_max ∈ p.truthSet, ∀ s ∈ p.truthSet, s ⊆ 
     -- by downward closure, {w} ∈ p for all w ∈ s
     intro w
     intro h2
-    have dc := p.downwardClosed s h1
-    rw [Set.subset_def] at dc
-    obtain ⟨ws, b⟩ := h
-    sorry
+    rw [←Set.singleton_subset_iff] at h2
+    have h3 := lemmas.mem_of_subset h1 h2
+
+    -- by fact 2.14, p is true at each w ∈ s
+    rw [fact_2_14]
+    rw [Proposition.supportedBy]
+    exact h3
   case mpr =>
+    have dc := p.downwardClosed
     sorry
 
 -- a.k.a. book exercise 3.6, homework 1 exercise 3

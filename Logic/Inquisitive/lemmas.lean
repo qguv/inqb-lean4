@@ -29,3 +29,8 @@ variable {p q : Proposition W}
 --theorem info_is_double_absolutePseudoComplement : p.info = p.absolutePseudoComplement.absolutePseudoComplement := by
 --theorem meet_bottom : p.absolutePseudoComplement.meet p = bottom W := sorry
 --theorem join_bottom : p.absolutePseudoComplement.join (bottom W) = p := sorry
+
+theorem mem_of_subset {s t : Set W} (h1 : s ∈ p.truthSet) (h2 : t ⊆ s) : t ∈ p.truthSet := by
+  apply p.downwardClosed s h1
+  rw [Set.mem_powerset_iff]
+  exact h2
