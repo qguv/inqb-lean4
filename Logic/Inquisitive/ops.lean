@@ -59,11 +59,11 @@ def Proposition.relativePseudoComplement : Proposition W where
     intro
     intro h2
     rw [Set.mem_setOf]
+    intro t
     intro h3
-    intro h4
     rw [Set.mem_powerset_iff] at h2
-    have h5 := SetLemmas.subset_trans h4 h2
-    exact h1 h3 h5
+    have h4 := SetLemmas.subset_trans h3 h2
+    exact h1 t h4
 
 def Proposition.absolutePseudoComplement : Proposition W where
   truthSet := 𝒫 (⋃₀ p.truthSet)ᶜ
