@@ -1,0 +1,27 @@
+book:
+  type: book
+  author:
+    - Ivano Ciardelli
+    - Jeroen Groenendijk
+    - Floris Roelofsen
+  title: Inquisitive Semantics
+  edition: 1
+  publisher: Oxford University Press
+  date: 2019
+  page-total: 219
+  language: en
+
+mathlib:
+  type: repository
+  title: mathlib4
+  url: https://github.com/leanprover-community/mathlib4
+
+lean:
+  type: repository
+  title: Lean 4
+  url: https://github.com/leanprover/lean4
+
+repo:
+  type: repository
+  title: InqB in Lean 4
+  url: https://github.com/qguv/inqb-lean4
