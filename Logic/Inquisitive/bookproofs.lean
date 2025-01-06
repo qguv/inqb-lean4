@@ -108,9 +108,30 @@ theorem fact_2_19iii (h : ∃ s_max ∈ p.truthSet, ∀ s ∈ p.truthSet, s ⊆ 
     rw [fact_2_14]
     rw [Proposition.supportedBy]
     exact h3
+
+  -- suppose p is true at each w ∈ s
   case mpr =>
-    have dc := p.downwardClosed
-    sorry
+    intro h1
+
+    -- by fact 2.14, this means that {w} ∈ p for all w ∈ s
+    have h2 := fun (w) (w_in_s : w ∈ s) ↦
+      (fact_2_14 p w).mp (h1 w w_in_s)
+
+    -- suppose now that p has a greatest element s_max
+    obtain ⟨smax, ⟨h3, h4⟩⟩ := h
+
+    -- then for all w ∈ s, {w} must be included in s_max
+    have h5 := fun (w) (w_in_s : w ∈ s) ↦
+      h4 {w} (h2 w w_in_s)
+
+    -- and so also s ⊆ s_max
+    have h6 := SetLemmas.all_singletons_subsets_implies_subset h5
+
+    -- since s_max ∈ p, it follows by downward closure that s ∈ p
+    have h7 := p.downwardClosed smax h3 h6
+
+    -- that is, p is supported at s
+    exact h7
 
 -- a.k.a. book exercise 3.6, homework 1 exercise 3
 theorem fact_3_14 : p = p.bang.meet p.decisionSet := by

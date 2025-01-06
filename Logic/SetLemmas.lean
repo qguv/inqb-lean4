@@ -56,3 +56,7 @@ theorem max_of_powerset : (∀ s ∈ 𝒫 A, s ⊆ A) := by
   intro s
   intro h
   exact h
+
+theorem all_singletons_subsets_implies_subset (h: ∀ a ∈ A, {a} ⊆ B) : (A ⊆ B) :=
+  fun a (a_in_a : a ∈ A) ↦
+    Set.singleton_subset_iff.mp (h a a_in_a)
