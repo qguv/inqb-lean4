@@ -114,15 +114,17 @@ theorem fact_2_19iii (h : ∃ s_max ∈ p.truthSet, ∀ s ∈ p.truthSet, s ⊆ 
     intro h1
 
     -- by fact 2.14, this means that {w} ∈ p for all w ∈ s
-    have h2 := fun (w) (w_in_s : w ∈ s) ↦
-      (fact_2_14 p w).mp (h1 w w_in_s)
+    conv at h1 =>
+      intro
+      intro
+      rw [fact_2_14]
 
     -- suppose now that p has a greatest element s_max
     obtain ⟨smax, ⟨h3, h4⟩⟩ := h
 
     -- then for all w ∈ s, {w} must be included in s_max
     have h5 := fun (w) (w_in_s : w ∈ s) ↦
-      h4 {w} (h2 w w_in_s)
+      h4 {w} (h1 w w_in_s)
 
     -- and so also s ⊆ s_max
     have h6 := SetLemmas.all_singletons_subsets_implies_subset h5
@@ -132,6 +134,33 @@ theorem fact_2_19iii (h : ∃ s_max ∈ p.truthSet, ∀ s ∈ p.truthSet, s ⊆ 
 
     -- that is, p is supported at s
     exact h7
+
+theorem fact_2_19iv (h: ∀ s : Set W, p.supportedBy s ↔ ∀ w ∈ s, p.trueIn w) : ¬p.isInquisitive := by
+  unfold Proposition.isInquisitive
+  push_neg
+
+  -- take any w ∈ p.info ... this shows that p is true at all w ∈ p.info
+  have h1 : (∀ w ∈ p.info, p.trueIn w) := by
+    intro w
+    intro h2
+
+    -- then w ∈ t for some t ∈ p
+    obtain ⟨t, h3, w_in_t⟩ := h2
+
+    -- since p is supported by t
+    rw [←Proposition.supportedBy] at h3
+
+    -- by h, p is true at w
+    have h4 := (h t).mp
+
+    -- since p is supported by t, then by h, p is true at w
+    exact h4 h3 w w_in_t
+
+  -- by h, it follows that p is supported by p.info
+  have h2 := (h p.info).mpr h1
+
+  -- i.e. that p.info ∈ p
+  exact h2
 
 -- a.k.a. book exercise 3.6, homework 1 exercise 3
 theorem fact_3_14 : p = p.bang.meet p.decisionSet := by

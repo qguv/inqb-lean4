@@ -60,3 +60,9 @@ theorem max_of_powerset : (∀ s ∈ 𝒫 A, s ⊆ A) := by
 theorem all_singletons_subsets_implies_subset (h: ∀ a ∈ A, {a} ⊆ B) : (A ⊆ B) :=
   fun a (a_in_a : a ∈ A) ↦
     Set.singleton_subset_iff.mp (h a a_in_a)
+
+theorem member_of_sUnion_implies_member_of_member_of_set {AA : Set (Set α)} : ∀ a ∈ ⋃₀ AA, ∃ A ∈ AA, a ∈ A := by
+  intro
+  intro h2
+  rw [Set.mem_sUnion] at h2
+  exact h2
