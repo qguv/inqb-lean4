@@ -12,7 +12,7 @@ namespace Inquisitive
 variable {W : Type}
 variable (p : Proposition W)
 
--- original proof
+-- original proof, absent from book
 theorem fact_2_14 : ∀ w, p.trueIn w ↔ p.supportedBy {w} := by
   intro w
   rw [Proposition.trueIn, Proposition.supportedBy, Proposition.info]
